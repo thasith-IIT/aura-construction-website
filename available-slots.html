@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Slots & Floor Plan Explorer | AURA Developments</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div id="shared-header"></div>
+
+    <section class="bg-slate-900 text-white py-10 border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <span class="text-xs font-bold uppercase tracking-widest text-amber-400">Live Inventory & Unit
+                Specifications</span>
+            <h1 class="font-serif-luxury text-3xl sm:text-4xl font-bold mt-1">Interactive Available Slots Explorer</h1>
+            <p class="text-slate-300 text-sm mt-1">
+                Select a project below to inspect available slots, bedroom/bathroom counts, square footage,
+                architectural blueprints, and book a tour.
+            </p>
+        </div>
+    </section>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Project Selector Tabs & Bedroom Filter -->
+        <div
+            class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 mb-8 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex flex-wrap gap-2" id="project-tabs"></div>
+
+            <div class="flex items-center gap-3">
+                <label class="text-xs font-bold uppercase text-slate-500">Filter Bedrooms:</label>
+                <select id="bed-filter" class="border border-slate-200 rounded-lg px-3 py-2 text-xs font-semibold">
+                    <option value="all">All Bedrooms (2, 3, 4 BHK)</option>
+                    <option value="2">2 Bedrooms</option>
+                    <option value="3">3 Bedrooms</option>
+                    <option value="4">4 Bedrooms / Penthouse</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- Left 7 Cols: Interactive Floor Plate / Master Plan Grid -->
+            <div class="lg:col-span-7 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex flex-wrap items-center justify-between gap-2 pb-4 mb-6 border-b border-slate-100">
+                    <div>
+                        <span id="current-project-badge" class="text-xs font-bold uppercase text-amber-600"></span>
+                        <h2 id="current-project-title" class="font-serif-luxury text-2xl font-bold text-slate-900"></h2>
+                    </div>
+                    <!-- Legend -->
+                    <div class="flex items-center gap-4 text-xs font-medium">
+                        <span class="flex items-center gap-1.5"><span
+                                class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span> Available</span>
+                        <span class="flex items-center gap-1.5"><span
+                                class="w-3 h-3 rounded-full bg-amber-500 inline-block"></span> Reserved</span>
+                        <span class="flex items-center gap-1.5"><span
+                                class="w-3 h-3 rounded-full bg-slate-300 inline-block"></span> Sold</span>
+                    </div>
+                </div>
+
+                <!-- Interactive Slots Grid -->
+                <div id="slots-matrix" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+            </div>
+
+            <!-- Right 5 Cols: Selected Slot Specification & Blueprint Inspector -->
+            <div class="lg:col-span-5">
+                <div id="slot-inspector"
+                    class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sticky top-24"></div>
+            </div>
+        </div>
+
+        <!-- Side-by-Side Unit Comparison Table -->
+        <section class="mt-12 bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h3 class="font-serif-luxury text-xl font-bold text-slate-900">Side-by-Side Unit Comparison</h3>
+                    <p class="text-xs text-slate-500">Click "Add to Compare" on any slot above to compare specifications
+                        side by side.</p>
+                </div>
+                <button onclick="clearComparison()" class="text-xs text-rose-600 hover:underline font-semibold">Clear
+                    Comparison</button>
+            </div>
+            <div id="comparison-container" class="overflow-x-auto"></div>
+        </section>
+    </main>
+
+    <div id="shared-footer"></div>
+
+    <script src="projects_data.js"></script>
+    <script src="app_logic.js"></script>
+    <script>
+        let selectedProjectId = getQueryParam("project") || AURA_PROJECTS[0].id;
+        let selectedUnitNo = null;
+        let bedFilter = "all";
+        let compareList = [];
+        try {
+            compareList = JSON.parse(localStorage.getItem("aura_compare_units") || "[]");
+        } catch (e) {
+            compareList = [];
+        }
+
+        function getActiveProject() {
+            return AURA_PROJECTS.find(p => p.id === selectedProjectId) || AURA_PROJECTS[0];
+        }
+
+        function renderProjectTabs() {
+            const tabsEl = document.getElementById("project-tabs");
+            tabsEl.innerHTML = AURA_PROJECTS.map(p => `
+                <button onclick="selectProject('${p.id}')" class="px-4 py-2 rounded-xl text-xs font-bold transition ${p.id === selectedProjectId ? 'bg-slate-900 text-white shadow' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'}">
+                    ${p.name}
+                    <span class="ml-1 px-1.5 py-0.5 rounded text-[10px] ${p.status === 'completed' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-500'}">
+                        ${p.status === 'completed' ? 'Completed' : 'Ongoing'}
+                    </span>
+                </button>
+            `).join("");
+        }
+
+        function selectProject(projectId) {
+            selectedProjectId = projectId;
+            const proj = getActiveProject();
+            selectedUnitNo = proj.units[0].unitNo;
+            renderProjectTabs();
+            renderSlotsMatrix();
+            renderSlotInspector();
+        }
+
+        function selectSlot(unitNo) {
+            selectedUnitNo = unitNo;
+            renderSlotsMatrix();
+            renderSlotInspector();
+        }
+
+        function renderSlotsMatrix() {
+            const proj = getActiveProject();
+            document.getElementById("current-project-badge").textContent = `${proj.statusLabel} •${proj.location}`;
+            document.getElementById("current-project-title").textContent = proj.name;
+
+            const filteredUnits = proj.units.filter(u => bedFilter === "all" || String(u.beds) === String(bedFilter));
+            if (!selectedUnitNo && filteredUnits.length > 0) {
+                selectedUnitNo = filteredUnits[0].unitNo;
+            }
+
+            const matrixEl = document.getElementById("slots-matrix");
+            matrixEl.innerHTML = filteredUnits.map(u => {
+                const isSelected = u.unitNo === selectedUnitNo;
+                const badgeClass = u.status === "available"
+                    ? "bg-emerald-100 text-emerald-800 border-emerald-300"
+                    : u.status === "reserved"
+                        ? "bg-amber-100 text-amber-800 border-amber-300"
+                        : "bg-slate-100 text-slate-400 border-slate-200 slot-sold";
+
+                return `
+                <div onclick="selectSlot('${u.unitNo}')" class="slot-card cursor-pointer rounded-xl border p-4 transition ${badgeClass}${isSelected ? 'slot-selected' : ''}">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="font-bold text-base text-slate-900">${u.unitNo}</span>
+                        <span class="text-[11px] font-bold uppercase px-2 py-0.5 rounded-full ${u.status === 'available' ? 'bg-emerald-600 text-white' : u.status === 'reserved' ? 'bg-amber-500 text-slate-950' : 'bg-slate-400 text-white'}">
+                            ${u.status}
+                        </span>
+                    </div>
+                    <p class="text-xs font-semibold text-slate-700 mb-2">${u.type} •${u.level}</p>
+                    <div class="flex items-center gap-3 text-xs text-slate-600 mb-3">
+                        <span><i class="fa-solid fa-bed mr-1"></i>${u.beds} Beds</span>
+                        <span><i class="fa-solid fa-bath mr-1"></i>${u.baths} Baths</span>
+                        <span><i class="fa-solid fa-ruler-combined mr-1"></i>${u.sqft} sq.ft.</span>
+                    </div>
+                    <div class="flex items-center justify-between pt-2 border-t border-black/10">
+                        <span class="text-xs text-slate-600">${u.view}</span>
+                        <span class="font-bold text-sm text-slate-900">${formatLKR(u.price)}</span>
+                    </div>
+                </div>`;
+            }).join("");
+        }
+
+        function renderSlotInspector() {
+            const proj = getActiveProject();
+            const unit = proj.units.find(u => u.unitNo === selectedUnitNo) || proj.units[0];
+            const inspectorEl = document.getElementById("slot-inspector");
+
+            inspectorEl.innerHTML = `
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-bold uppercase tracking-wider text-amber-600">${unit.level}</span>
+                    <span class="text-xs font-bold uppercase px-2.5 py-1 rounded-full ${unit.status === 'available' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-700'}">
+                        ${unit.status.toUpperCase()}
+                    </span>
+                </div>
+                <h3 class="font-serif-luxury text-2xl font-bold text-slate-900">${unit.unitNo} — ${unit.type}</h3>
+                <p class="text-xs text-slate-500 mt-1 mb-4"><i class="fa-solid fa-compass text-amber-500 mr-1"></i>Orientation: ${unit.view}</p>
+
+                <!-- Key Metrics Grid -->
+                <div class="grid grid-cols-3 gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200 mb-5 text-center">
+                    <div>
+                        <span class="text-xs text-slate-400 block">Bedrooms</span>
+                        <span class="font-bold text-slate-900 text-base"><i class="fa-solid fa-bed text-amber-500 mr-1"></i>${unit.beds}</span>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-400 block">Bathrooms</span>
+                        <span class="font-bold text-slate-900 text-base"><i class="fa-solid fa-bath text-amber-500 mr-1"></i>${unit.baths}</span>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-400 block">Floor Area</span>
+                        <span class="font-bold text-slate-900 text-base">${unit.sqft} sq.ft.</span>
+                    </div>
+                </div>
+
+                <!-- 2D Architectural Blueprint Schematic -->
+                <div class="blueprint-grid rounded-xl p-4 text-white mb-5 border border-sky-500/30">
+                    <div class="flex items-center justify-between text-[11px] text-sky-300 uppercase tracking-wider mb-3">
+                        <span><i class="fa-solid fa-compass-drafting mr-1"></i>Architectural Schematic</span>
+                        <span>Scale: 1:100 • ${unit.sqft} SQ.FT</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        ${unit.rooms.map(r => `
+                            <div class="border border-sky-400/40 bg-sky-950/40 p-2.5 rounded text-xs text-sky-100 flex items-center justify-between">
+                                <span>${r}</span>
+                                <i class="fa-solid fa-maximize text-[10px] text-sky-400"></i>
+                            </div>
+                        `).join("")}
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between mb-5">
+                    <div>
+                        <span class="text-xs text-slate-400 block">Total Unit Price</span>
+                        <span class="text-2xl font-bold text-slate-900">${formatFullLKR(unit.price)}</span>
+                    </div>
+                    <button onclick="addToCompare('${proj.id}', '${unit.unitNo}')" class="text-xs font-semibold px-3 py-2 rounded-lg border border-slate-300 hover:bg-slate-100 transition">
+                        <i class="fa-solid fa-scale-balanced mr-1"></i> + Compare
+                    </button>
+                </div>
+
+                <!-- Smart Action Buttons -->
+                <div class="space-y-2.5">
+                    ${unit.status !== "sold" ? `
+                        <a href="book-tour.html?project=${proj.id}&unit=${encodeURIComponent(unit.unitNo)}" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm py-3 px-4 rounded-xl transition flex items-center justify-center gap-2 shadow">
+                            <i class="fa-regular fa-calendar-check"></i>
+                            <span>${proj.status === 'completed' ? `Book Visit to Inspect ${unit.unitNo}` : `Book ${unit.beds}-Bedroom Model Flat Tour`}</span>
+                        </a>
+                    ` : `
+                        <div class="w-full bg-slate-200 text-slate-500 font-semibold text-sm py-3 px-4 rounded-xl text-center">
+                            This Slot Has Been Sold
+                        </div>
+                    `}
+                    <a href="financial-calculator.html?project=${proj.id}&price=${unit.price}" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-calculator text-amber-400"></i> Calculate EMI & Payment Plan for ${unit.unitNo}
+                    </a>
+                </div>
+            `;
+        }
+
+        function addToCompare(projectId, unitNo) {
+            const proj = AURA_PROJECTS.find(p => p.id === projectId);
+            const unit = proj.units.find(u => u.unitNo === unitNo);
+            const key = `${projectId}__${unitNo}`;
+            if (!compareList.some(item => item.key === key)) {
+                compareList.push({
+                    key,
+                    projectName: proj.name,
+                    projectStatus: proj.statusLabel,
+                    ...unit
+                });
+                try {
+                    localStorage.setItem("aura_compare_units", JSON.stringify(compareList));
+                } catch (e) {}
+                renderComparisonTable();
+            }
+        }
+
+        function clearComparison() {
+            compareList = [];
+            try {
+                localStorage.removeItem("aura_compare_units");
+            } catch (e) {}
+            renderComparisonTable();
+        }
+
+        function renderComparisonTable() {
+            const container = document.getElementById("comparison-container");
+            if (compareList.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-400 py-4">No units added to comparison yet.</p>`;
+                return;
+            }
+            container.innerHTML = `
+                <table class="w-full text-left border-collapse text-xs">
+                    <thead>
+                        <tr class="border-b border-slate-200 bg-slate-50">
+                            <th class="p-3 font-bold text-slate-700">Unit / Project</th>
+                            <th class="p-3 font-bold text-slate-700">Project Status</th>
+                            <th class="p-3 font-bold text-slate-700">Beds / Baths</th>
+                            <th class="p-3 font-bold text-slate-700">Area (Sq.Ft.)</th>
+                            <th class="p-3 font-bold text-slate-700">Orientation</th>
+                            <th class="p-3 font-bold text-slate-700">Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${compareList.map(item => `
+                            <tr class="border-b border-slate-100">
+                                <td class="p-3 font-bold text-slate-900">${item.unitNo} <span class="block font-normal text-slate-500">${item.projectName}</span></td>
+                                <td class="p-3">${item.projectStatus}</td>
+                                <td class="p-3">${item.beds} Bed / ${item.baths} Bath</td>
+                                <td class="p-3 font-semibold">${item.sqft} sq.ft.</td>
+                                <td class="p-3">${item.view}</td>
+                                <td class="p-3 font-bold text-amber-600">${formatLKR(item.price)}</td>
+                            </tr>
+                        `).join("")}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            renderSharedLayout("slots");
+            const proj = getActiveProject();
+            selectedUnitNo = proj.units[0].unitNo;
+
+            document.getElementById("bed-filter").addEventListener("change", (e) => {
+                bedFilter = e.target.value;
+                renderSlotsMatrix();
+            });
+
+            renderProjectTabs();
+            renderSlotsMatrix();
+            renderSlotInspector();
+            renderComparisonTable();
+        });
+    </script>
+</body>
+
+</html>

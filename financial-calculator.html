@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mortgage EMI & Construction Payment Calculator | AURA Developments</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div id="shared-header"></div>
+
+    <section class="bg-slate-900 text-white py-10 border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <span class="text-xs font-bold uppercase tracking-widest text-amber-400">Financial Planning Tools</span>
+            <h1 class="font-serif-luxury text-3xl sm:text-4xl font-bold mt-1">Mortgage EMI & Milestone Payment Schedule
+            </h1>
+            <p class="text-slate-300 text-sm mt-1">
+                Estimate your monthly bank installment or view our interest-free construction milestone payment plan for
+                ongoing developments.
+            </p>
+        </div>
+    </section>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <!-- Left 6 Cols: Interactive Sliders -->
+        <div class="lg:col-span-6 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+            <h2 class="font-serif-luxury text-2xl font-bold text-slate-900">Configure Property Price & Loan</h2>
+
+            <div>
+                <div class="flex justify-between text-xs font-bold mb-2">
+                    <span class="text-slate-500 uppercase">Property Value (LKR)</span>
+                    <span id="price-display" class="text-slate-900 text-sm">LKR 48,500,000</span>
+                </div>
+                <input type="range" id="calc-price" min="30000000" max="140000000" step="500000" value="48500000"
+                    class="w-full accent-amber-500">
+            </div>
+
+            <div>
+                <div class="flex justify-between text-xs font-bold mb-2">
+                    <span class="text-slate-500 uppercase">Down Payment (%)</span>
+                    <span id="down-display" class="text-slate-900 text-sm">25%</span>
+                </div>
+                <input type="range" id="calc-down" min="10" max="70" step="5" value="25"
+                    class="w-full accent-amber-500">
+            </div>
+
+            <div>
+                <div class="flex justify-between text-xs font-bold mb-2">
+                    <span class="text-slate-500 uppercase">Annual Interest Rate (%)</span>
+                    <span id="rate-display" class="text-slate-900 text-sm">11.5%</span>
+                </div>
+                <input type="range" id="calc-rate" min="7" max="18" step="0.5" value="11.5"
+                    class="w-full accent-amber-500">
+            </div>
+
+            <div>
+                <div class="flex justify-between text-xs font-bold mb-2">
+                    <span class="text-slate-500 uppercase">Loan Tenure (Years)</span>
+                    <span id="years-display" class="text-slate-900 text-sm">15 Years</span>
+                </div>
+                <input type="range" id="calc-years" min="5" max="25" step="1" value="15"
+                    class="w-full accent-amber-500">
+            </div>
+
+            <!-- EMI Output Box -->
+            <div class="bg-slate-950 text-white p-6 rounded-2xl">
+                <span class="text-xs uppercase tracking-widest text-amber-400 font-bold">Estimated Monthly Bank
+                    EMI</span>
+                <p id="emi-result" class="font-serif-luxury text-3xl sm:text-4xl font-bold text-white mt-1"></p>
+                <div class="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-slate-800 text-xs">
+                    <div>
+                        <span class="text-slate-400 block">Down Payment Amount</span>
+                        <strong id="down-amount-result" class="text-white text-sm"></strong>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 block">Total Loan Principal</span>
+                        <strong id="loan-principal-result" class="text-emerald-400 text-sm"></strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right 6 Cols: Developer Construction Milestone Schedule -->
+        <div class="lg:col-span-6 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+            <span class="text-xs font-bold uppercase tracking-wider text-amber-600">Developer Direct Payment Plan</span>
+            <h2 class="font-serif-luxury text-2xl font-bold text-slate-900 mt-1 mb-2">Construction-Linked Milestone
+                Tranches</h2>
+            <p class="text-xs text-slate-500 mb-6">
+                For ongoing projects, buyers pay in stage-verified construction installments certified by chartered
+                structural engineers.
+            </p>
+            <div id="milestone-tranches" class="space-y-3"></div>
+        </div>
+    </main>
+
+    <div id="shared-footer"></div>
+
+    <script src="projects_data.js"></script>
+    <script src="app_logic.js"></script>
+    <script>
+        function calculateFinancials() {
+            const price = parseFloat(document.getElementById("calc-price").value);
+            const downPct = parseFloat(document.getElementById("calc-down").value);
+            const annualRate = parseFloat(document.getElementById("calc-rate").value);
+            const years = parseInt(document.getElementById("calc-years").value, 10);
+
+            const downAmount = price * (downPct / 100);
+            const principal = price - downAmount;
+            const monthlyRate = annualRate / 12 / 100;
+            const months = years * 12;
+
+            const emi = (principal * monthlyRate * Math.pow(1 + monthlyRate, months)) / (Math.pow(1 + monthlyRate, months) - 1);
+
+            document.getElementById("price-display").textContent = formatFullLKR(price);
+            document.getElementById("down-display").textContent = `${downPct}%`;
+            document.getElementById("rate-display").textContent = `${annualRate}%`;
+            document.getElementById("years-display").textContent = `${years} Years`;
+
+            document.getElementById("emi-result").textContent = `${formatFullLKR(emi)} / mo`;
+            document.getElementById("down-amount-result").textContent = formatFullLKR(downAmount);
+            document.getElementById("loan-principal-result").textContent = formatFullLKR(principal);
+
+            const tranches = [
+                { title: "1. Reservation & Sales Agreement", pct: 20, desc: "Upon signing Sale & Purchase Agreement" },
+                { title: "2. Piling & Foundation Completion", pct: 20, desc: "Certified substructure milestone" },
+                { title: "3. Superstructure Roof-Level Topping Out", pct: 25, desc: "Upon structural slab completion" },
+                { title: "4. Internal Finishes, Plumbing & Glazing", pct: 25, desc: "Upon tile, MEP & window installation" },
+                { title: "5. Final Handover & Key Collection", pct: 10, desc: "Upon COC issuance & unit inspection" }
+            ];
+
+            document.getElementById("milestone-tranches").innerHTML = tranches.map(t => `
+                <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-bold text-slate-900">${t.title} (${t.pct}%)</p>
+                        <p class="text-[11px] text-slate-500">${t.desc}</p>
+                    </div>
+                    <span class="font-bold text-sm text-slate-900">${formatFullLKR(price * (t.pct / 100))}</span>
+                </div>
+            `).join("");
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            renderSharedLayout("calculator");
+            const urlPrice = getQueryParam("price");
+            if (urlPrice) {
+                document.getElementById("calc-price").value = urlPrice;
+            }
+            ["calc-price", "calc-down", "calc-rate", "calc-years"].forEach(id => {
+                document.getElementById(id).addEventListener("input", calculateFinancials);
+            });
+            calculateFinancials();
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book an Apartment or Model Flat Tour | AURA Developments</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div id="shared-header"></div>
+
+    <section class="bg-slate-900 text-white py-10 border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <span class="text-xs font-bold uppercase tracking-widest text-amber-400">Private Property & Show Flat
+                Appointments</span>
+            <h1 class="font-serif-luxury text-3xl sm:text-4xl font-bold mt-1">Schedule Your Personal Property Tour</h1>
+            <p class="text-slate-300 text-sm mt-1">
+                Visit the actual move-in-ready apartment/villa for **Completed Projects**, or tour the furnished
+                2-Bedroom / 3-Bedroom **Model Flats** for **Ongoing Projects**.
+            </p>
+        </div>
+    </section>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <!-- Left 7 Cols: Smart Booking Form -->
+        <div class="lg:col-span-7 bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200">
+            <!-- Dynamic Authentication Requirement Banner -->
+            <div id="booking-auth-banner"></div>
+
+            <form id="tour-booking-form" class="space-y-6">
+                <!-- Step 1: Select Project -->
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-600 mb-2">1. Select Development
+                        Project</label>
+                    <select id="booking-project"
+                        class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:border-amber-500"></select>
+                </div>
+
+                <!-- Dynamic Smart Notice Banner (Changes automatically for Completed vs Ongoing) -->
+                <div id="smart-tour-banner" class="p-4 rounded-xl border text-xs leading-relaxed"></div>
+
+                <!-- Step 2: Dynamic Selection (Actual Unit for Completed OR Model Flat for Ongoing) -->
+                <div>
+                    <label id="dynamic-slot-label"
+                        class="block text-xs font-bold uppercase text-slate-600 mb-2"></label>
+                    <select id="booking-target-slot"
+                        class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:border-amber-500"></select>
+                </div>
+
+                <!-- Step 3: Tour Mode, Date & Time Slot -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-600 mb-2">3. Visit Mode</label>
+                        <select id="booking-mode"
+                            class="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-xs font-semibold">
+                            <option value="In-Person Site / Model Visit">In-Person Visit</option>
+                            <option value="Live 1-on-1 Video Walkthrough">Live Video Tour (Zoom)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-600 mb-2">4. Preferred Date</label>
+                        <input type="date" id="booking-date" required
+                            class="w-full border border-slate-300 rounded-xl px-3 py-2 text-xs font-semibold">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-600 mb-2">5. Time Slot</label>
+                        <select id="booking-time"
+                            class="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-xs font-semibold">
+                            <option value="10:00 AM - 11:00 AM">10:00 AM - 11:00 AM</option>
+                            <option value="11:30 AM - 12:30 PM">11:30 AM - 12:30 PM</option>
+                            <option value="02:30 PM - 03:30 PM">02:30 PM - 03:30 PM</option>
+                            <option value="04:30 PM - 05:30 PM">04:30 PM - 05:30 PM</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Step 4: Visitor Contact Details -->
+                <div class="pt-2">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <label class="block text-xs font-bold uppercase text-slate-600">Visitor Contact Details</label>
+                        <span id="contact-autofill-hint" class="text-[11px] font-medium text-emerald-600"></span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <input type="text" id="visitor-name" required placeholder="Full Name"
+                                class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-amber-500">
+                        </div>
+                        <div>
+                            <input type="tel" id="visitor-phone" required placeholder="Mobile / WhatsApp Number"
+                                class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-amber-500">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dynamic Auth-Protected Submit Action Container -->
+                <div id="booking-submit-container"></div>
+            </form>
+        </div>
+
+        <!-- Right 5 Cols: Confirmed Bookings Pass List -->
+        <div class="lg:col-span-5 space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <h3 class="font-serif-luxury text-xl font-bold text-slate-900 mb-2">Your Scheduled Tour Passes</h3>
+                <p class="text-xs text-slate-500 mb-4">Present your gate pass code at the security reception or
+                    Experience Center upon arrival.</p>
+                <div id="saved-bookings-list" class="space-y-3"></div>
+            </div>
+        </div>
+    </main>
+
+    <div id="shared-footer"></div>
+
+    <script src="projects_data.js"></script>
+    <script src="app_logic.js"></script>
+    <script>
+        const preselectedProject = getQueryParam("project") || AURA_PROJECTS[0].id;
+        const preselectedUnit = getQueryParam("unit") || "";
+
+        function updateSmartBookingFields() {
+            const projId = document.getElementById("booking-project").value;
+            const proj = AURA_PROJECTS.find(p => p.id === projId) || AURA_PROJECTS[0];
+            const banner = document.getElementById("smart-tour-banner");
+            const label = document.getElementById("dynamic-slot-label");
+            const select = document.getElementById("booking-target-slot");
+
+            if (proj.status === "completed") {
+                banner.className = "p-4 rounded-xl border bg-emerald-50 border-emerald-300 text-emerald-950 text-xs leading-relaxed";
+                banner.innerHTML = `<i class="fa-solid fa-key text-emerald-600 mr-1.5"></i><strong>Completed Project — Direct Physical Unit Visit:</strong> Because <strong>${proj.name}</strong> is 100% completed, you will be escorted directly inside the actual apartment/villa unit you select below.`;
+                label.textContent = "2. Select Actual Completed Apartment / Villa Unit to Visit";
+
+                const availableUnits = proj.units.filter(u => u.status !== "sold");
+                select.innerHTML = availableUnits.map(u => `
+                    <option value="Physical Unit ${u.unitNo} (${u.type} - ${u.sqft} sq.ft.)" ${preselectedUnit === u.unitNo ? 'selected' : ''}>
+                        Visit Actual ${u.unitNo} — ${u.type} (${u.beds} Bed, ${u.sqft} sq.ft. • ${formatLKR(u.price)})
+                    </option>
+                `).join("");
+            } else {
+                banner.className = "p-4 rounded-xl border bg-amber-50 border-amber-300 text-amber-950 text-xs leading-relaxed";
+                banner.innerHTML = `<i class="fa-solid fa-helmet-safety text-amber-600 mr-1.5"></i><strong>Ongoing Project — Furnished Model Flat Visit:</strong> Because <strong>${proj.name}</strong> is currently under construction (${proj.progressPercent}% complete), you will tour our full-scale furnished <strong>Show Model Flats</strong> at the on-site Experience Center.`;
+                label.textContent = "2. Select Furnished Show Model to Tour (2-Bedroom / 3-Bedroom / Villa Model)";
+
+                select.innerHTML = proj.modelsAvailable.map(m => `
+                    <option value="Show Model: ${m}">${m}</option>
+                `).join("");
+            }
+        }
+
+        function updateBookingAuthUI() {
+            const user = getCurrentUser();
+            const bannerEl = document.getElementById("booking-auth-banner");
+            const submitContainer = document.getElementById("booking-submit-container");
+            const autofillHint = document.getElementById("contact-autofill-hint");
+            const nameInput = document.getElementById("visitor-name");
+            const phoneInput = document.getElementById("visitor-phone");
+
+            if (user) {
+                bannerEl.innerHTML = `
+                    <div class="mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-950 flex flex-wrap items-center justify-between gap-3 text-xs">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-sm shadow-sm">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <div>
+                                <p class="font-bold text-sm text-slate-900 flex items-center gap-2">
+                                    <span>Signed In as ${user.name}</span>
+                                    <span class="text-[10px] bg-emerald-200 text-emerald-800 font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">VIP Unlocked</span>
+                                </p>
+                                <p class="text-slate-600 text-[11px]">${user.email} • Your inspection slot reservation is ready to confirm.</p>
+                            </div>
+                        </div>
+                        <button type="button" onclick="handleSignOut()" class="text-xs font-semibold text-slate-600 hover:text-rose-600 border border-slate-300 hover:border-rose-300 px-3 py-1.5 rounded-lg bg-white transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-arrow-right-from-bracket text-xs"></i> Sign Out / Switch
+                        </button>
+                    </div>
+                `;
+
+                autofillHint.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-500 mr-1"></i>Autofilled from your VIP Profile`;
+                if (!nameInput.value || nameInput.getAttribute("data-autofilled") === "true") {
+                    nameInput.value = user.name;
+                    nameInput.setAttribute("data-autofilled", "true");
+                }
+                if (!phoneInput.value || phoneInput.getAttribute("data-autofilled") === "true") {
+                    phoneInput.value = user.phone || "";
+                    phoneInput.setAttribute("data-autofilled", "true");
+                }
+
+                submitContainer.innerHTML = `
+                    <button type="submit" id="btn-confirm-booking"
+                        class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 px-6 rounded-xl transition shadow-md text-sm flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-calendar-check"></i> Confirm Property Tour Appointment
+                    </button>
+                `;
+            } else {
+                bannerEl.innerHTML = `
+                    <div class="mb-6 p-5 rounded-2xl bg-gradient-to-r from-slate-900 to-slate-950 text-white border border-amber-500/40 shadow-lg">
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                            <div class="flex items-start gap-3.5">
+                                <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 border border-amber-500/30 text-lg">
+                                    <i class="fa-solid fa-lock"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-sm text-white flex items-center gap-2">
+                                        <span>Sign In Required to Book an Inspection Slot</span>
+                                        <span class="text-[10px] bg-amber-500 text-slate-950 px-2 py-0.5 rounded font-bold uppercase tracking-wider">Required</span>
+                                    </h3>
+                                    <p class="text-xs text-slate-300 mt-1 max-w-xl leading-relaxed">
+                                        Browsing project specs and model layouts is open to everyone. To reserve an exclusive visit slot and generate your verified VIP Security Gate Pass, an account is required.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto shrink-0">
+                                <button type="button" onclick="openAuthModal('signin', onAuthStatusChanged, 'Sign in below to reserve your inspection slot.')" class="flex-1 sm:flex-initial bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs px-4 py-2.5 rounded-xl transition shadow">
+                                    Sign In
+                                </button>
+                                <button type="button" onclick="openAuthModal('signup', onAuthStatusChanged, 'Create a free account to book your property visit slot.')" class="flex-1 sm:flex-initial bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs px-4 py-2.5 rounded-xl border border-slate-700 transition">
+                                    Register Free
+                                </button>
+                                <button type="button" onclick="fillDemoAndLogin()" class="w-full sm:w-auto bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 font-semibold text-xs px-3 py-2.5 rounded-xl transition flex items-center justify-center gap-1.5" title="Instant Demo Login">
+                                    <i class="fa-solid fa-bolt text-amber-400"></i> 1-Click Demo
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                autofillHint.innerHTML = `<span class="text-slate-400"><i class="fa-solid fa-lock text-amber-500 mr-1"></i>Sign in to autofill</span>`;
+                if (nameInput.getAttribute("data-autofilled") === "true") {
+                    nameInput.value = "";
+                    nameInput.removeAttribute("data-autofilled");
+                }
+                if (phoneInput.getAttribute("data-autofilled") === "true") {
+                    phoneInput.value = "";
+                    phoneInput.removeAttribute("data-autofilled");
+                }
+
+                submitContainer.innerHTML = `
+                    <button type="button" onclick="openAuthModal('signin', onAuthStatusChanged, 'Please sign in or create an account to reserve this visit slot.')"
+                        class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3.5 px-6 rounded-xl transition shadow-md text-sm flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-lock"></i>
+                        <span>Sign In to Reserve Inspection Slot</span>
+                    </button>
+                `;
+            }
+        }
+
+        function onAuthStatusChanged(user) {
+            updateBookingAuthUI();
+            renderSavedBookings();
+        }
+        window.onAuthStatusChanged = onAuthStatusChanged;
+
+        function renderSavedBookings() {
+            const listEl = document.getElementById("saved-bookings-list");
+            const user = getCurrentUser();
+
+            if (!user) {
+                listEl.innerHTML = `
+                    <div class="p-6 text-center bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-500 space-y-3">
+                        <div class="w-12 h-12 mx-auto rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <p class="font-bold text-slate-800 text-sm">Pass Protection Active</p>
+                        <p class="text-[11px] text-slate-500 leading-relaxed">Sign in with your VIP account to view your scheduled tour passes and security gate entry codes.</p>
+                        <button type="button" onclick="openAuthModal('signin', onAuthStatusChanged)" class="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-4 py-2 rounded-lg transition inline-flex items-center gap-2 shadow">
+                            <i class="fa-solid fa-arrow-right-to-bracket text-amber-400"></i> Sign In to View Passes
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            let allBookings = [];
+            try {
+                allBookings = JSON.parse(localStorage.getItem("aura_tour_bookings") || "[]");
+            } catch (e) {
+                allBookings = [];
+            }
+
+            const userBookings = allBookings.filter(b => !b.userEmail || b.userEmail.toLowerCase() === user.email.toLowerCase());
+
+            if (userBookings.length === 0) {
+                listEl.innerHTML = `<div class="p-6 text-center bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-400">No appointments booked yet for <strong>${user.name}</strong>. Complete the form above to generate your instant VIP Gate Pass.</div>`;
+                return;
+            }
+
+            listEl.innerHTML = userBookings.map(b => `
+                <div class="p-4 rounded-xl bg-slate-900 text-white border border-slate-800 shadow">
+                    <div class="flex items-center justify-between text-xs text-amber-400 font-bold mb-1">
+                        <span>PASS #${b.refCode}</span>
+                        <span>${b.date} • ${b.time}</span>
+                    </div>
+                    <h4 class="font-bold text-sm">${b.projectName}</h4>
+                    <p class="text-xs text-emerald-400 font-semibold mt-0.5">${b.targetSlot}</p>
+                    <p class="text-[11px] text-slate-400 mt-2 flex items-center justify-between">
+                        <span><i class="fa-solid fa-user mr-1 text-amber-400"></i>${b.name} (${b.phone})</span>
+                        <span class="text-slate-300 font-medium">${b.mode}</span>
+                    </p>
+                </div>
+            `).join("");
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            renderSharedLayout("book");
+
+            const projSelect = document.getElementById("booking-project");
+            projSelect.innerHTML = AURA_PROJECTS.map(p => `
+                <option value="${p.id}" ${p.id === preselectedProject ? 'selected' : ''}>
+                    ${p.name} — [${p.status === 'completed' ? 'COMPLETED: Visit Actual Unit' : 'ONGOING: Visit Model Flat'}]
+                </option>
+            `).join("");
+
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            document.getElementById("booking-date").value = tomorrow.toISOString().split("T")[0];
+
+            projSelect.addEventListener("change", updateSmartBookingFields);
+            updateSmartBookingFields();
+            updateBookingAuthUI();
+            renderSavedBookings();
+
+            window.addEventListener("aura-auth-changed", (e) => {
+                onAuthStatusChanged(e.detail);
+            });
+
+            document.getElementById("tour-booking-form").addEventListener("submit", (e) => {
+                e.preventDefault();
+                const user = getCurrentUser();
+                if (!user) {
+                    openAuthModal("signin", onAuthStatusChanged, "Sign in or register below to reserve this visit slot.");
+                    return;
+                }
+
+                const proj = AURA_PROJECTS.find(p => p.id === projSelect.value);
+                const newBooking = {
+                    refCode: "AURA-" + Math.floor(1000 + Math.random() * 9000),
+                    userEmail: user.email,
+                    projectName: proj.name,
+                    targetSlot: document.getElementById("booking-target-slot").value,
+                    mode: document.getElementById("booking-mode").value,
+                    date: document.getElementById("booking-date").value,
+                    time: document.getElementById("booking-time").value,
+                    name: document.getElementById("visitor-name").value || user.name,
+                    phone: document.getElementById("visitor-phone").value || user.phone
+                };
+
+                let existing = [];
+                try {
+                    existing = JSON.parse(localStorage.getItem("aura_tour_bookings") || "[]");
+                } catch (e) {
+                    existing = [];
+                }
+                existing.unshift(newBooking);
+                try {
+                    localStorage.setItem("aura_tour_bookings", JSON.stringify(existing));
+                } catch (e) {}
+
+                renderSavedBookings();
+                updateSmartBookingFields();
+                updateBookingAuthUI();
+
+                // Smooth success notice
+                alert(`VIP Gate Pass #${newBooking.refCode} successfully generated for ${newBooking.name}!\n\nProject: ${newBooking.projectName}\nSlot: ${newBooking.targetSlot}\nDate & Time: ${newBooking.date} at ${newBooking.time}\n\nPresent this pass at security upon arrival.`);
+            });
+        });
+    </script>
+</body>
+
+</html>

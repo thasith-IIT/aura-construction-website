@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects Portfolio | AURA Developments</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div id="shared-header"></div>
+
+    <!-- Page Banner -->
+    <section class="bg-slate-900 text-white py-12 border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <span class="text-xs font-bold uppercase tracking-widest text-amber-400">Project Directory & Construction
+                Tracker</span>
+            <h1 class="font-serif-luxury text-3xl sm:text-5xl font-bold mt-2">Completed & Ongoing Developments</h1>
+            <p class="text-slate-300 text-sm sm:text-base max-w-2xl mt-2">
+                Track real-time construction milestones for our ongoing projects or inspect move-in-ready residences
+                with immediate deed transfer.
+            </p>
+        </div>
+    </section>
+
+    <!-- Filter Controls -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+        <div
+            class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex flex-wrap gap-2" id="status-filter-btns">
+                <button data-status="all"
+                    class="status-btn bg-slate-900 text-white px-4 py-2 rounded-lg text-xs font-semibold transition">
+                    All Projects (4)
+                </button>
+                <button data-status="completed"
+                    class="status-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg text-xs font-semibold transition">
+                    <i class="fa-solid fa-circle-check text-emerald-500 mr-1"></i> Completed — Ready to Tour Unit
+                </button>
+                <button data-status="ongoing"
+                    class="status-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg text-xs font-semibold transition">
+                    <i class="fa-solid fa-person-digging text-amber-500 mr-1"></i> Ongoing — Tour Model Flats
+                </button>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <label class="text-xs font-semibold text-slate-500">Property Type:</label>
+                <select id="type-filter-select"
+                    class="border border-slate-200 rounded-lg px-3 py-2 text-xs font-semibold">
+                    <option value="all">All Types</option>
+                    <option value="Apartment">Luxury Apartments</option>
+                    <option value="Housing Scheme">Gated Housing Schemes</option>
+                </select>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Detailed Cards List -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10" id="projects-container"></section>
+
+    <div id="shared-footer"></div>
+
+    <script src="projects_data.js"></script>
+    <script src="app_logic.js"></script>
+    <script>
+        let activeStatus = getQueryParam("status") || "all";
+        let activeType = getQueryParam("type") || "all";
+
+        function renderProjectsList() {
+            const container = document.getElementById("projects-container");
+            const filtered = AURA_PROJECTS.filter(p => {
+                const matchStatus = activeStatus === "all" || p.status === activeStatus;
+                const matchType = activeType === "all" || p.propertyType === activeType;
+                return matchStatus && matchType;
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="bg-white p-12 text-center rounded-2xl border border-slate-200 text-slate-500">No projects match the selected filter criteria.</div>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map(p => `
+                <article class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="grid grid-cols-1 lg:grid-cols-12">
+                        <!-- Image Column -->
+                        <div class="lg:col-span-5 relative min-h-[280px]">
+                            <img src="${p.heroImage}" alt="${p.name}" class="w-full h-full object-cover">
+                            <span class="absolute top-4 left-4 px-3.5 py-1.5 rounded-full text-xs font-bold ${p.status === 'completed' ? 'bg-emerald-600 text-white' : 'bg-amber-500 text-slate-950'}">
+                                ${p.statusLabel}
+                            </span>
+                            <div class="absolute bottom-4 left-4 right-4 bg-slate-950/90 backdrop-blur-sm text-white p-3 rounded-xl flex items-center justify-between text-xs">
+                                <span><i class="fa-solid fa-shield-halved text-amber-400 mr-1"></i> Approval: ${p.reraNumber}</span>
+                                <span class="text-emerald-400 font-bold">${p.availableUnitsCount} of${p.totalUnits} Slots Open</span>
+                            </div>
+                        </div>
+
+                        <!-- Details Column -->
+                        <div class="lg:col-span-7 p-6 sm:p-8 flex flex-col justify-between">
+                            <div>
+                                <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                                    <span class="text-xs font-bold uppercase tracking-wider text-amber-600">${p.propertyType} •${p.location}</span>
+                                    <span class="text-xs font-semibold text-slate-500">Completion: ${p.completionDate}</span>
+                                </div>
+                                <h2 class="font-serif-luxury text-2xl sm:text-3xl font-bold text-slate-900 mb-3">${p.name}</h2>
+                                <p class="text-sm text-slate-600 leading-relaxed mb-5">${p.summary}</p>
+
+                                <!-- Construction Milestone Tracker -->
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 mb-5">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-xs font-bold uppercase text-slate-700">Construction Milestone Timeline</span>
+                                        <span class="text-xs font-bold ${p.status === 'completed' ? 'text-emerald-600' : 'text-amber-600'}">${p.progressPercent}% Complete</span>
+                                    </div>
+                                    <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden mb-4">
+                                        <div class="h-full ${p.status === 'completed' ? 'bg-emerald-500' : 'bg-amber-500'}" style="width: ${p.progressPercent}%"></div>
+                                    </div>
+                                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                        ${p.milestones.map(m => `
+                                            <div class="p-2 rounded-lg border text-xs ${m.status === 'done' ? 'bg-emerald-50 border-emerald-200 text-emerald-900' : m.status === 'current' ? 'bg-amber-50 border-amber-300 text-amber-900 font-semibold' : 'bg-white border-slate-200 text-slate-400'}">
+                                                <div class="flex items-center gap-1 font-bold">
+                                                    <i class="fa-solid ${m.status === 'done' ? 'fa-circle-check text-emerald-600' : m.status === 'current' ? 'fa-spinner fa-spin text-amber-600' : 'fa-circle-dot'}"></i>
+                                                    <span class="truncate">${m.stage}</span>
+                                                </div>
+                                                <div class="text-[11px] opacity-80 mt-0.5">${m.date}</div>
+                                            </div>
+                                        `).join("")}
+                                    </div>
+                                </div>
+
+                                <!-- Latest Site Photo Update & Amenities -->
+                                <div class="flex flex-wrap gap-2 mb-6">
+                                    ${p.amenities.map(a => `<span class="text-xs bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md font-medium"><i class="fa-solid fa-check text-amber-500 mr-1"></i>${a}</span>`).join("")}
+                                </div>
+                            </div>
+
+                            <!-- Action Bar -->
+                            <div class="pt-4 border-t border-slate-200 flex flex-wrap items-center justify-between gap-4">
+                                <div>
+                                    <span class="text-xs text-slate-400 block">Starting Investment</span>
+                                    <span class="text-xl font-bold text-slate-900">${formatLKR(p.startingPrice)}</span>
+                                </div>
+                                <div class="flex flex-wrap gap-2.5">
+                                    <a href="available-slots.html?project=${p.id}" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-4 py-2.5 rounded-lg transition flex items-center gap-2">
+                                        <i class="fa-solid fa-table-cells"></i> Inspect Available Slots (${p.availableUnitsCount})
+                                    </a>
+                                    <a href="book-tour.html?project=${p.id}" class="bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold px-4 py-2.5 rounded-lg transition flex items-center gap-2">
+                                        <i class="fa-regular fa-calendar-check"></i>
+                                        ${p.status === 'completed' ? 'Book Actual Apartment Tour' : 'Book Show Model Flat Tour'}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            `).join("");
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            renderSharedLayout("projects");
+
+            const typeSelect = document.getElementById("type-filter-select");
+            typeSelect.value = activeType;
+
+            document.querySelectorAll(".status-btn").forEach(btn => {
+                if (btn.dataset.status === activeStatus) {
+                    btn.className = "status-btn bg-slate-900 text-white px-4 py-2 rounded-lg text-xs font-semibold transition";
+                } else {
+                    btn.className = "status-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg text-xs font-semibold transition";
+                }
+
+                btn.addEventListener("click", () => {
+                    activeStatus = btn.dataset.status;
+                    document.querySelectorAll(".status-btn").forEach(b => {
+                        b.className = b.dataset.status === activeStatus
+                            ? "status-btn bg-slate-900 text-white px-4 py-2 rounded-lg text-xs font-semibold transition"
+                            : "status-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg text-xs font-semibold transition";
+                    });
+                    renderProjectsList();
+                });
+            });
+
+            typeSelect.addEventListener("change", (e) => {
+                activeType = e.target.value;
+                renderProjectsList();
+            });
+
+            renderProjectsList();
+        });
+    </script>
+</body>
+
+</html>

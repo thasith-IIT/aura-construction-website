@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>360° Model Walkthrough & Sun-Path Simulator | AURA Developments</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div id="shared-header"></div>
+
+    <section class="bg-slate-900 text-white py-10 border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <span class="text-xs font-bold uppercase tracking-widest text-amber-400">Digital Experience Center</span>
+            <h1 class="font-serif-luxury text-3xl sm:text-4xl font-bold mt-1">360° Show Flat Studio & Sun-Path Simulator
+            </h1>
+            <p class="text-slate-300 text-sm mt-1">
+                Walk through our 2-Bedroom, 3-Bedroom, and 4-Bedroom Show Villa models online and test natural daylight
+                orientation across the day.
+            </p>
+        </div>
+    </section>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
+        <!-- 360 Model Flat Viewer -->
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+                <div class="flex flex-wrap gap-2" id="model-selector-btns">
+                    <button onclick="switchVirtualModel('2bed-model')" id="btn-2bed-model"
+                        class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-900 text-white">
+                        2-Bedroom Model Flat
+                    </button>
+                    <button onclick="switchVirtualModel('3bed-model')" id="btn-3bed-model"
+                        class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700">
+                        3-Bedroom Model Flat
+                    </button>
+                    <button onclick="switchVirtualModel('4bed-villa')" id="btn-4bed-villa"
+                        class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700">
+                        4-Bedroom Show Villa
+                    </button>
+                </div>
+                <div id="room-tabs" class="flex flex-wrap gap-2"></div>
+            </div>
+
+            <!-- Interactive Viewport -->
+            <div class="relative rounded-2xl overflow-hidden h-[420px] sm:h-[500px] bg-slate-950">
+                <img id="virtual-stage-img" src="" alt="Virtual Model Tour"
+                    class="w-full h-full object-cover transition-all duration-500">
+                <div id="sunlight-overlay" class="absolute inset-0 pointer-events-none transition-all duration-500">
+                </div>
+                <div id="hotspot-layer" class="absolute inset-0"></div>
+
+                <!-- Bottom Info Bar -->
+                <div
+                    class="absolute bottom-4 left-4 right-4 bg-slate-950/85 backdrop-blur-md text-white p-4 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                        <h3 id="virtual-model-title" class="font-serif-luxury text-lg font-bold text-amber-400"></h3>
+                        <p id="virtual-room-caption" class="text-xs text-slate-300 mt-0.5"></p>
+                    </div>
+                    <a href="book-tour.html?project=marina-crest"
+                        class="bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold px-4 py-2.5 rounded-lg whitespace-nowrap">
+                        Tour This Model In Person →
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Daylight & Sun-Path Orientation Simulator -->
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                <div class="md:col-span-7">
+                    <span class="text-xs font-bold uppercase tracking-wider text-amber-600">Natural Light & Balcony
+                        Orientation</span>
+                    <h2 class="font-serif-luxury text-2xl font-bold text-slate-900 mt-1">Interactive Sun-Path & Daylight
+                        Simulator</h2>
+                    <p class="text-sm text-slate-600 mt-2 mb-4">
+                        Drag the time slider to simulate how natural sunlight illuminates East-facing (Morning Sun) and
+                        West-facing (Ocean Sunset) apartments from 6:00 AM to 6:30 PM.
+                    </p>
+                    <input type="range" id="sun-slider" min="6" max="18" step="1" value="10"
+                        class="w-full accent-amber-500 cursor-pointer">
+                    <div class="flex justify-between text-xs font-semibold text-slate-500 mt-2">
+                        <span>6:00 AM (Sunrise)</span>
+                        <span>12:00 PM (Zenith)</span>
+                        <span>6:00 PM (Golden Sunset)</span>
+                    </div>
+                </div>
+                <div class="md:col-span-5 bg-slate-900 text-white p-5 rounded-xl">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs uppercase tracking-wider text-amber-400 font-bold">Simulated Time</span>
+                        <span id="sun-time-label" class="text-lg font-bold">10:00 AM</span>
+                    </div>
+                    <p id="sun-advice-text" class="text-xs text-slate-300 leading-relaxed"></p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="shared-footer"></div>
+
+    <script src="projects_data.js"></script>
+    <script src="app_logic.js"></script>
+    <script>
+        let currentModelKey = "2bed-model";
+        let currentRoomIndex = 0;
+
+        function switchVirtualModel(modelKey) {
+            currentModelKey = modelKey;
+            currentRoomIndex = 0;
+            ["2bed-model", "3bed-model", "4bed-villa"].forEach(k => {
+                const btn = document.getElementById(`btn-${k}`);
+                btn.className = k === modelKey
+                    ? "px-4 py-2 rounded-xl text-xs font-bold bg-slate-900 text-white"
+                    : "px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200";
+            });
+            renderVirtualStage();
+        }
+
+        function switchRoom(index) {
+            currentRoomIndex = index;
+            renderVirtualStage();
+        }
+
+        function renderVirtualStage() {
+            const model = VIRTUAL_MODELS_DATA[currentModelKey];
+            const room = model.rooms[currentRoomIndex];
+
+            document.getElementById("virtual-stage-img").src = room.img;
+            document.getElementById("virtual-model-title").textContent = `${model.title} — ${room.name}`;
+            document.getElementById("virtual-room-caption").textContent = room.caption;
+
+            document.getElementById("room-tabs").innerHTML = model.rooms.map((r, idx) => `
+                <button onclick="switchRoom(${idx})" class="px-3 py-1.5 rounded-lg text-xs font-semibold ${idx === currentRoomIndex ? 'bg-amber-500 text-slate-950 font-bold' : 'bg-slate-100 text-slate-600'}">
+                    <i class="fa-solid fa-camera mr-1"></i>${r.name}
+                </button>
+            `).join("");
+
+            document.getElementById("hotspot-layer").innerHTML = room.hotspots.map(h => `
+                <div style="left: ${h.x}%; top: ${h.y}%;" class="absolute -translate-x-1/2 -translate-y-1/2 group">
+                    <button class="hotspot-btn w-8 h-8 rounded-full bg-amber-500 text-slate-950 font-bold text-xs flex items-center justify-center shadow-lg">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                    <div class="hidden group-hover:block w-56 bg-slate-950/95 text-white p-3 rounded-xl text-xs shadow-xl mt-2 border border-amber-500/40">
+                        <strong class="text-amber-400 block mb-0.5">${h.label}</strong>
+                        <span>${h.detail}</span>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            renderSharedLayout("virtual");
+            renderVirtualStage();
+
+            const slider = document.getElementById("sun-slider");
+            const timeLabel = document.getElementById("sun-time-label");
+            const adviceText = document.getElementById("sun-advice-text");
+            const overlay = document.getElementById("sunlight-overlay");
+
+            function updateSunSimulation() {
+                const hour = parseInt(slider.value, 10);
+                const ampm = hour >= 12 ? "PM" : "AM";
+                const displayHour = hour > 12 ? hour - 12 : hour;
+                timeLabel.textContent = `${displayHour}:00 ${ampm}`;
+
+                if (hour <= 10) {
+                    overlay.style.background = "linear-gradient(90deg, rgba(253, 224, 71, 0.18), transparent)";
+                    adviceText.textContent = "Morning Sun (East-Facing Units): Gentle warm daylight enters the master bedrooms and breakfast balconies with minimal heat gain.";
+                } else if (hour <= 14) {
+                    overlay.style.background = "rgba(255, 255, 255, 0.05)";
+                    adviceText.textContent = "Midday Zenith: Overhead sun is shielded by our 5-foot deep architectural balcony overhangs, keeping interiors cool.";
+                } else {
+                    overlay.style.background = "linear-gradient(270deg, rgba(249, 115, 22, 0.28), rgba(15, 23, 42, 0.25))";
+                    adviceText.textContent = "Golden Sunset (West Ocean-Facing Units): Spectacular golden-hour reflections across the Indian Ocean & Diyawanna Lake.";
+                }
+            }
+
+            slider.addEventListener("input", updateSunSimulation);
+            updateSunSimulation();
+        });
+    </script>
+</body>
+
+</html>

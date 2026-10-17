@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURA Developments | Luxury Apartments & Gated Housing Schemes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Shared Navigation Header -->
+    <div id="shared-header"></div>
+
+    <!-- Hero Section -->
+    <section class="relative bg-slate-950 text-white py-20 lg:py-28 overflow-hidden">
+        <div class="absolute inset-0 opacity-35">
+            <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1800&q=80"
+                alt="Aura Luxury Living" class="w-full h-full object-cover">
+        </div>
+        <div class="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/90 to-slate-950/50"></div>
+
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-3xl">
+                <span
+                    class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30 mb-6">
+                    <i class="fa-solid fa-award"></i> Grade-A Registered Property Developer
+                </span>
+                <h1 class="font-serif-luxury text-4xl sm:text-6xl font-bold leading-tight mb-6">
+                    Inspect Ready Homes or Experience Our <span class="text-amber-400">Model Show Flats</span>
+                </h1>
+                <p class="text-lg text-slate-300 mb-8 leading-relaxed">
+                    Explore live unit availability across our completed luxury apartments and gated villa communities,
+                    or book a guided tour of our furnished 2-Bedroom and 3-Bedroom model flats for ongoing projects.
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="projects.html"
+                        class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-7 py-4 rounded-xl transition shadow-lg flex items-center gap-2">
+                        <span>Explore All Projects</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                    <a href="available-slots.html"
+                        class="bg-white/10 hover:bg-white/20 text-white border border-white/20 font-semibold px-7 py-4 rounded-xl transition flex items-center gap-2">
+                        <i class="fa-solid fa-layer-group text-amber-400"></i>
+                        <span>Check Available Slots</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Quick Project Search Bar -->
+            <div class="mt-12 bg-white text-slate-900 p-6 rounded-2xl shadow-2xl max-w-5xl">
+                <form action="projects.html" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5">Project Status</label>
+                        <select name="status"
+                            class="w-full border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm font-medium focus:outline-none focus:border-amber-500">
+                            <option value="all">All Projects (Completed & Ongoing)</option>
+                            <option value="completed">Completed (Visit Actual Unit)</option>
+                            <option value="ongoing">Ongoing (Visit Model Flat)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5">Property Category</label>
+                        <select name="type"
+                            class="w-full border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm font-medium focus:outline-none focus:border-amber-500">
+                            <option value="all">Apartments & Housing Schemes</option>
+                            <option value="Apartment">Luxury Apartments</option>
+                            <option value="Housing Scheme">Gated Housing Schemes</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5">Tour Experience</label>
+                        <select
+                            class="w-full border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm font-medium focus:outline-none focus:border-amber-500">
+                            <option>In-Person or Virtual Tour</option>
+                            <option>Direct Completed Apartment Visit</option>
+                            <option>2-Bed / 3-Bed Show Model Visit</option>
+                        </select>
+                    </div>
+                    <button type="submit"
+                        class="bg-slate-900 hover:bg-slate-800 text-white font-semibold py-2.5 px-6 rounded-lg transition h-[42px] flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-magnifying-glass text-amber-400"></i> Filter Portfolio
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Track Record Counters -->
+    <section class="py-12 bg-white border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div>
+                <p class="font-serif-luxury text-4xl font-bold text-slate-900">18+</p>
+                <p class="text-xs uppercase tracking-wider text-slate-500 mt-1">Years of Engineering Excellence</p>
+            </div>
+            <div>
+                <p class="font-serif-luxury text-4xl font-bold text-emerald-600">2.4M</p>
+                <p class="text-xs uppercase tracking-wider text-slate-500 mt-1">Sq. Ft. Delivered On Schedule</p>
+            </div>
+            <div>
+                <p class="font-serif-luxury text-4xl font-bold text-slate-900">1,150+</p>
+                <p class="text-xs uppercase tracking-wider text-slate-500 mt-1">Happy Homeowner Families</p>
+            </div>
+            <div>
+                <p class="font-serif-luxury text-4xl font-bold text-amber-600">100%</p>
+                <p class="text-xs uppercase tracking-wider text-slate-500 mt-1">UDA & CMA Legal Compliance</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Developments Preview -->
+    <section class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-10">
+            <div>
+                <span class="text-xs font-bold uppercase tracking-widest text-amber-600">Signature Portfolio</span>
+                <h2 class="font-serif-luxury text-3xl font-bold text-slate-900 mt-1">Completed & Ongoing Developments
+                </h2>
+            </div>
+            <a href="projects.html" class="text-sm font-semibold text-amber-600 hover:text-amber-700 mt-3 md:mt-0">
+                View Full Construction Timelines & Details →
+            </a>
+        </div>
+
+        <div id="home-featured-grid" class="grid grid-cols-1 md:grid-cols-2 gap-8"></div>
+    </section>
+
+    <!-- Smart Tour Difference Callout -->
+    <section class="py-16 bg-slate-900 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-12">
+                <span class="text-xs font-bold uppercase tracking-widest text-amber-400">Tailored Property
+                    Inspections</span>
+                <h2 class="font-serif-luxury text-3xl font-bold mt-2">How Our Smart Tour Booking Works</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-slate-800/80 border border-emerald-500/30 rounded-2xl p-8">
+                    <span
+                        class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 mb-4">
+                        <i class="fa-solid fa-key mr-1"></i> Completed Projects
+                    </span>
+                    <h3 class="text-xl font-bold mb-3">Direct Physical Apartment / Villa Inspection</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                        When booking a visit for our completed projects (such as <strong>Aura Sky Residences</strong> or
+                        <strong>Emerald Sanctuary Villas</strong>), you select the exact available unit number (e.g.,
+                        <em>Unit A-1201</em> or <em>Villa V-14</em>) and walk straight into the actual property to
+                        experience the true floor height, natural breeze, and view.
+                    </p>
+                    <a href="book-tour.html?project=aura-sky"
+                        class="inline-flex items-center gap-2 text-sm font-semibold text-emerald-400 hover:text-emerald-300">
+                        Book a Completed Unit Tour <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="bg-slate-800/80 border border-amber-500/30 rounded-2xl p-8">
+                    <span
+                        class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 mb-4">
+                        <i class="fa-solid fa-helmet-safety mr-1"></i> Ongoing Projects
+                    </span>
+                    <h3 class="text-xl font-bold mb-3">Furnished Model Flat & Experience Center Tour</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                        For under-construction developments (such as <strong>Marina One Crest</strong> or <strong>Aura
+                            Botanica</strong>), you can tour our full-scale, fully furnished <strong>2-Bedroom Model
+                            Flat</strong>, <strong>3-Bedroom Model Flat</strong>, or <strong>4-Bedroom Show
+                            Villa</strong> to inspect room dimensions, marble finishes, and fittings firsthand.
+                    </p>
+                    <a href="book-tour.html?project=marina-crest"
+                        class="inline-flex items-center gap-2 text-sm font-semibold text-amber-400 hover:text-amber-300">
+                        Book a Model Flat Tour <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Shared Footer -->
+    <div id="shared-footer"></div>
+
+    <script src="projects_data.js"></script>
+    <script src="app_logic.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            renderSharedLayout("home");
+
+            const grid = document.getElementById("home-featured-grid");
+            grid.innerHTML = AURA_PROJECTS.map(p => `
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
+                    <div class="relative h-60">
+                        <img src="${p.heroImage}" alt="${p.name}" class="w-full h-full object-cover">
+                        <span class="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold ${p.status === 'completed' ? 'bg-emerald-600 text-white' : 'bg-amber-500 text-slate-950'}">
+                            ${p.statusLabel}
+                        </span>
+                        <span class="absolute bottom-4 right-4 bg-slate-950/85 text-white text-xs font-semibold px-3 py-1.5 rounded-lg">
+                            ${p.availableUnitsCount} Slots Available
+                        </span>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between text-xs text-slate-500 mb-1">
+                                <span><i class="fa-solid fa-location-dot text-amber-500 mr-1"></i>${p.location}</span>
+                                <span class="font-semibold text-slate-700">${p.propertyType}</span>
+                            </div>
+                            <h3 class="font-serif-luxury text-2xl font-bold text-slate-900 mb-2">${p.name}</h3>
+                            <p class="text-sm text-slate-600 mb-4">${p.summary}</p>
+                        </div>
+                        <div class="pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
+                            <div>
+                                <span class="text-xs text-slate-400 block">Starting From</span>
+                                <span class="text-lg font-bold text-slate-900">${formatLKR(p.startingPrice)}</span>
+                            </div>
+                            <div class="flex gap-2">
+                                <a href="available-slots.html?project=${p.id}" class="px-4 py-2 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-800 transition">
+                                    View Available Slots
+                                </a>
+                                <a href="book-tour.html?project=${p.id}" class="px-4 py-2 rounded-lg text-xs font-semibold bg-amber-500 hover:bg-amber-400 text-slate-950 transition">
+                                    ${p.status === 'completed' ? 'Visit Actual Unit' : 'Visit Model Flat'}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join("");
+        });
+    </script>
+</body>
+
+</html>
